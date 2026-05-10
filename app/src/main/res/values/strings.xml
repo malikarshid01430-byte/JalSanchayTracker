@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Jal Sanchay Tracker</string>
+    <string name="dashboard">Dashboard</string>
+    <string name="add_data">Add Data</string>
+    <string name="history">History</string>
+    <string name="tips">Tips</string>
+    <string name="profile">Profile</string>
+    <string name="total_saved">Total Water Saved</string>
+    <string name="impact_score">Impact Score</string>
+    <string name="calculate">Calculate</string>
+    <string name="save_profile">Save Profile</string>
+    <string name="liters">Liters</string>
+    <string name="mm">mm</string>
+</resources>
