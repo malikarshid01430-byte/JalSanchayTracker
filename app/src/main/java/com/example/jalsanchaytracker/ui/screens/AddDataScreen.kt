@@ -10,6 +10,7 @@ import com.example.jalsanchaytracker.viewmodel.RainfallViewModel
 @Composable
 fun AddDataScreen(viewModel: RainfallViewModel, onDataAdded: () -> Unit) {
     var rainfallMm by remember { mutableStateOf("") }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
 
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
         Text(text = "Add Rainfall Data", style = MaterialTheme.typography.headlineMedium)
@@ -17,21 +18,28 @@ fun AddDataScreen(viewModel: RainfallViewModel, onDataAdded: () -> Unit) {
 
         OutlinedTextField(
             value = rainfallMm,
-            onValueChange = { rainfallMm = it },
+            onValueChange = { rainfallMm = it; errorMessage = null },
             label = { Text("Rainfall (mm)") },
             modifier = Modifier.fillMaxWidth(),
-            singleLine = true
+            singleLine = true,
+            isError = errorMessage != null
         )
+
+        if (errorMessage != null) {
+            Text(text = errorMessage!!, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
+        }
 
         Spacer(modifier = Modifier.height(24.dp))
 
         Button(
             onClick = {
-                val mm = rainfallMm.toDoubleOrNull() ?: 0.0
-                if (mm > 0) {
-                    viewModel.addRainfallData(mm)
-                    onDataAdded()
+                val mm = rainfallMm.toDoubleOrNull()
+                if (mm == null || mm <= 0) {
+                    errorMessage = "Enter a positive rainfall value."
+                    return@Button
                 }
+                viewModel.addRainfallData(mm)
+                onDataAdded()
             },
             modifier = Modifier.fillMaxWidth()
         ) {

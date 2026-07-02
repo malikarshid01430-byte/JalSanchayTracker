@@ -60,6 +60,7 @@ class RainfallViewModel(
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
 
     fun addRainfallData(rainfallMm: Double) {
+        if (rainfallMm <= 0) return
         viewModelScope.launch {
             val profile = userProfile.value ?: return@launch
             val areaSqM = profile.roofArea * 0.0929
@@ -75,6 +76,7 @@ class RainfallViewModel(
     }
 
     fun addWaterUsage(amountLiters: Double, category: String) {
+        if (amountLiters <= 0 || category.isBlank()) return
         viewModelScope.launch {
             val entity = WaterUsageEntity(
                 date = System.currentTimeMillis(),
@@ -86,6 +88,7 @@ class RainfallViewModel(
     }
 
     fun saveUserProfile(name: String, roofArea: Double, tankCapacity: Double, location: String) {
+        if (name.isBlank()) return
         viewModelScope.launch {
             val user = UserEntity(
                 name = name,
