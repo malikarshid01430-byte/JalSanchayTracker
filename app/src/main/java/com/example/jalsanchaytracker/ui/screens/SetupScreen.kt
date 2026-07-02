@@ -37,10 +37,7 @@ fun SetupScreen(viewModel: RainfallViewModel, onComplete: () -> Unit) {
         viewModel.uiEvents.collectLatest { event ->
             when (event) {
                 is UiEvent.ShowError -> snackbarHostState.showSnackbar(event.message)
-                is UiEvent.ShowSuccess -> {
-                    snackbarHostState.showSnackbar(event.message)
-                    onComplete()
-                }
+                is UiEvent.ShowSuccess -> onComplete()
             }
         }
     }

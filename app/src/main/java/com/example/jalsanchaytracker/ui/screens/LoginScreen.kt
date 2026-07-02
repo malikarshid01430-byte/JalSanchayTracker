@@ -104,7 +104,6 @@ fun LoginScreen(viewModel: RainfallViewModel, onLoginSuccess: () -> Unit) {
                                 tankCapacity = 5000.0,
                                 location = "Default Location"
                             )
-                            onLoginSuccess()
                         }
                     },
                     modifier = Modifier.fillMaxWidth()

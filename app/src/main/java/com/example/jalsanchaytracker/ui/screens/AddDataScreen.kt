@@ -19,10 +19,7 @@ fun AddDataScreen(viewModel: RainfallViewModel, onDataAdded: () -> Unit) {
         viewModel.uiEvents.collectLatest { event ->
             when (event) {
                 is UiEvent.ShowError -> snackbarHostState.showSnackbar(event.message)
-                is UiEvent.ShowSuccess -> {
-                    snackbarHostState.showSnackbar(event.message)
-                    onDataAdded()
-                }
+                is UiEvent.ShowSuccess -> onDataAdded()
             }
         }
     }
