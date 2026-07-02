@@ -239,19 +239,34 @@ fun InstructionItem(text: String) {
 @Composable
 fun UsageInputDialog(onDismiss: () -> Unit, onConfirm: (Double) -> Unit) {
     var amount by remember { mutableStateOf("") }
+    var errorText by remember { mutableStateOf<String?>(null) }
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text("Log Water Usage") },
         text = {
-            OutlinedTextField(
-                value = amount,
-                onValueChange = { amount = it },
-                label = { Text("Amount (Liters)") },
-                modifier = Modifier.fillMaxWidth()
-            )
+            Column {
+                OutlinedTextField(
+                    value = amount,
+                    onValueChange = { amount = it; errorText = null },
+                    label = { Text("Amount (Liters)") },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                    isError = errorText != null
+                )
+                if (errorText != null) {
+                    Text(text = errorText!!, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
+                }
+            }
         },
         confirmButton = {
-            Button(onClick = { onConfirm(amount.toDoubleOrNull() ?: 0.0) }) {
+            Button(onClick = {
+                val parsed = amount.toDoubleOrNull()
+                if (parsed == null || parsed <= 0) {
+                    errorText = "Enter a positive number."
+                } else {
+                    onConfirm(parsed)
+                }
+            }) {
                 Text("Confirm")
             }
         },

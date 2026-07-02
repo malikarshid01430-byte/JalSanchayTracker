@@ -14,6 +14,7 @@ fun SetupScreen(viewModel: RainfallViewModel, onComplete: () -> Unit) {
     var roofArea by remember { mutableStateOf("") }
     var tankCapacity by remember { mutableStateOf("") }
     var location by remember { mutableStateOf("") }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
 
     val userProfile by viewModel.userProfile.collectAsStateWithLifecycle()
 
@@ -40,13 +41,40 @@ fun SetupScreen(viewModel: RainfallViewModel, onComplete: () -> Unit) {
 
         Spacer(modifier = Modifier.height(32.dp))
 
+        if (errorMessage != null) {
+            Text(text = errorMessage!!, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+
         Button(
             onClick = {
+                val trimmedName = name.trim()
+                val parsedRoofArea = roofArea.toDoubleOrNull()
+                val parsedTankCapacity = tankCapacity.toDoubleOrNull()
+                val trimmedLocation = location.trim()
+                when {
+                    trimmedName.isEmpty() -> {
+                        errorMessage = "Name is required."
+                        return@Button
+                    }
+                    parsedRoofArea == null || parsedRoofArea <= 0 -> {
+                        errorMessage = "Roof area must be a positive number."
+                        return@Button
+                    }
+                    parsedTankCapacity == null || parsedTankCapacity <= 0 -> {
+                        errorMessage = "Tank capacity must be a positive number."
+                        return@Button
+                    }
+                    trimmedLocation.isEmpty() -> {
+                        errorMessage = "Location is required."
+                        return@Button
+                    }
+                }
                 viewModel.saveUserProfile(
-                    name,
-                    roofArea.toDoubleOrNull() ?: 0.0,
-                    tankCapacity.toDoubleOrNull() ?: 0.0,
-                    location
+                    trimmedName,
+                    parsedRoofArea,
+                    parsedTankCapacity,
+                    trimmedLocation
                 )
                 onComplete()
             },
