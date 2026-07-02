@@ -72,13 +72,18 @@ fun LoginScreen(viewModel: RainfallViewModel, onLoginSuccess: () -> Unit) {
                         }
                     }
                     isLoading = true
-                    viewModel.saveUserProfile(
-                        name = trimmedEmail.substringBefore("@"),
-                        roofArea = 1000.0,
-                        tankCapacity = 5000.0,
-                        location = "Default Location"
-                    )
-                    onLoginSuccess()
+                    try {
+                        viewModel.saveUserProfile(
+                            name = trimmedEmail.substringBefore("@"),
+                            roofArea = 1000.0,
+                            tankCapacity = 5000.0,
+                            location = "Default Location"
+                        )
+                        onLoginSuccess()
+                    } catch (e: Exception) {
+                        isLoading = false
+                        errorMessage = "Login failed. Please try again."
+                    }
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {

@@ -31,13 +31,13 @@ fun SetupScreen(viewModel: RainfallViewModel, onComplete: () -> Unit) {
         Text(text = "Profile Setup", style = MaterialTheme.typography.headlineMedium)
         Spacer(modifier = Modifier.height(24.dp))
 
-        OutlinedTextField(value = name, onValueChange = { name = it }, label = { Text("Name") }, modifier = Modifier.fillMaxWidth())
+        OutlinedTextField(value = name, onValueChange = { name = it; errorMessage = null }, label = { Text("Name") }, modifier = Modifier.fillMaxWidth())
         Spacer(modifier = Modifier.height(8.dp))
-        OutlinedTextField(value = roofArea, onValueChange = { roofArea = it }, label = { Text("Roof Area (sq ft)") }, modifier = Modifier.fillMaxWidth())
+        OutlinedTextField(value = roofArea, onValueChange = { roofArea = it; errorMessage = null }, label = { Text("Roof Area (sq ft)") }, modifier = Modifier.fillMaxWidth())
         Spacer(modifier = Modifier.height(8.dp))
-        OutlinedTextField(value = tankCapacity, onValueChange = { tankCapacity = it }, label = { Text("Tank Capacity (Liters)") }, modifier = Modifier.fillMaxWidth())
+        OutlinedTextField(value = tankCapacity, onValueChange = { tankCapacity = it; errorMessage = null }, label = { Text("Tank Capacity (Liters)") }, modifier = Modifier.fillMaxWidth())
         Spacer(modifier = Modifier.height(8.dp))
-        OutlinedTextField(value = location, onValueChange = { location = it }, label = { Text("Location") }, modifier = Modifier.fillMaxWidth())
+        OutlinedTextField(value = location, onValueChange = { location = it; errorMessage = null }, label = { Text("Location") }, modifier = Modifier.fillMaxWidth())
 
         Spacer(modifier = Modifier.height(32.dp))
 
