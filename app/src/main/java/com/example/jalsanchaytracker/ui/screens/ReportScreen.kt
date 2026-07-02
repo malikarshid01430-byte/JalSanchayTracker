@@ -1,12 +1,15 @@
 package com.example.jalsanchaytracker.ui.screens
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.jalsanchaytracker.ui.components.ScreenScaffold
 import com.example.jalsanchaytracker.viewmodel.RainfallViewModel
 import com.github.mikephil.charting.charts.LineChart
 
@@ -14,10 +17,7 @@ import com.github.mikephil.charting.charts.LineChart
 fun ReportScreen(viewModel: RainfallViewModel) {
     val chartData by viewModel.chartData.collectAsStateWithLifecycle()
 
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-        Text(text = "Rainfall Analysis", style = MaterialTheme.typography.headlineMedium)
-        Spacer(modifier = Modifier.height(24.dp))
-
+    ScreenScaffold(title = "Rainfall Analysis") {
         if (chartData != null) {
             AndroidView(
                 factory = { context ->

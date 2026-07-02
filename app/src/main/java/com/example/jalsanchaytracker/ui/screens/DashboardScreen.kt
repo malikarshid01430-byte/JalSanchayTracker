@@ -4,13 +4,39 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Opacity
+import androidx.compose.material.icons.filled.Remove
+import androidx.compose.material.icons.filled.WaterDrop
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -23,6 +49,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.example.jalsanchaytracker.ui.components.AppTextField
+import com.example.jalsanchaytracker.ui.theme.AlertRed
+import com.example.jalsanchaytracker.ui.theme.BackgroundGray
+import com.example.jalsanchaytracker.ui.theme.DarkNavy
+import com.example.jalsanchaytracker.ui.theme.InfoBlue
+import com.example.jalsanchaytracker.ui.theme.InfoBlueBg
+import com.example.jalsanchaytracker.ui.theme.TankOutline
+import com.example.jalsanchaytracker.ui.theme.TextDarkGray
+import com.example.jalsanchaytracker.ui.theme.WaterBlue
+import com.example.jalsanchaytracker.ui.theme.WaterBlueDark
+import com.example.jalsanchaytracker.ui.theme.WaterBlueLight
+import com.example.jalsanchaytracker.util.toSafeDouble
 import com.example.jalsanchaytracker.viewmodel.RainfallViewModel
 
 @Composable
@@ -52,7 +90,7 @@ fun DashboardScreen(viewModel: RainfallViewModel) {
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color(0xFFF5F7FA))
+                .background(BackgroundGray)
                 .padding(padding)
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -72,14 +110,14 @@ fun DashboardScreen(viewModel: RainfallViewModel) {
                         title = "Saved",
                         value = "${totalSaved?.toInt() ?: 0}L",
                         icon = Icons.Default.WaterDrop,
-                        color = Color(0xFF2196F3),
+                        color = WaterBlue,
                         modifier = Modifier.weight(1f)
                     )
                     StatCardSmall(
                         title = "Used",
                         value = "${totalUsed?.toInt() ?: 0}L",
                         icon = Icons.Default.Opacity,
-                        color = Color(0xFFF44336),
+                        color = AlertRed,
                         modifier = Modifier.weight(1f)
                     )
                 }
@@ -118,7 +156,7 @@ fun HeaderSection(name: String) {
             text = "Your Water Summary",
             fontSize = 28.sp,
             fontWeight = FontWeight.ExtraBold,
-            color = Color(0xFF1A237E)
+            color = DarkNavy
         )
     }
 }
@@ -147,17 +185,15 @@ fun ModernWaterTankCard(fillPercentage: Float, available: Double, capacity: Doub
                     val width = size.width
                     val height = size.height
                     
-                    // Background path (tank shape)
                     drawRect(
-                        color = Color(0xFFE0E0E0),
+                        color = TankOutline,
                         style = Stroke(width = 2.dp.toPx())
                     )
                     
-                    // Water
                     val waterHeight = height * animatedFill
                     drawRect(
                         brush = Brush.verticalGradient(
-                            colors = listOf(Color(0xFF4FC3F7), Color(0xFF0288D1))
+                            colors = listOf(WaterBlueLight, WaterBlueDark)
                         ),
                         topLeft = Offset(0f, height - waterHeight),
                         size = Size(width, waterHeight)
@@ -170,7 +206,7 @@ fun ModernWaterTankCard(fillPercentage: Float, available: Double, capacity: Doub
                     text = "${(fillPercentage * 100).toInt()}% Full",
                     fontSize = 32.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color(0xFF0288D1)
+                    color = WaterBlueDark
                 )
                 Text(
                     text = "Current Status",
@@ -209,13 +245,13 @@ fun InstructionSection() {
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(20.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFFE3F2FD))
+        colors = CardDefaults.cardColors(containerColor = InfoBlueBg)
     ) {
         Column(modifier = Modifier.padding(20.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(Icons.Default.Info, contentDescription = null, tint = Color(0xFF1976D2))
+                Icon(Icons.Default.Info, contentDescription = null, tint = InfoBlue)
                 Spacer(modifier = Modifier.width(8.dp))
-                Text(text = "How to use?", fontWeight = FontWeight.Bold, color = Color(0xFF1976D2))
+                Text(text = "How to use?", fontWeight = FontWeight.Bold, color = InfoBlue)
             }
             Spacer(modifier = Modifier.height(12.dp))
             InstructionItem("1. Add Rainfall data when it rains to track saved water.")
@@ -231,7 +267,7 @@ fun InstructionItem(text: String) {
     Text(
         text = text,
         fontSize = 14.sp,
-        color = Color(0xFF455A64),
+        color = TextDarkGray,
         modifier = Modifier.padding(vertical = 4.dp)
     )
 }
@@ -243,15 +279,14 @@ fun UsageInputDialog(onDismiss: () -> Unit, onConfirm: (Double) -> Unit) {
         onDismissRequest = onDismiss,
         title = { Text("Log Water Usage") },
         text = {
-            OutlinedTextField(
+            AppTextField(
                 value = amount,
                 onValueChange = { amount = it },
-                label = { Text("Amount (Liters)") },
-                modifier = Modifier.fillMaxWidth()
+                label = "Amount (Liters)"
             )
         },
         confirmButton = {
-            Button(onClick = { onConfirm(amount.toDoubleOrNull() ?: 0.0) }) {
+            Button(onClick = { onConfirm(amount.toSafeDouble()) }) {
                 Text("Confirm")
             }
         },

@@ -1,25 +1,31 @@
 package com.example.jalsanchaytracker.ui.screens
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.jalsanchaytracker.ui.components.AppTextField
+import com.example.jalsanchaytracker.ui.components.ScreenScaffold
+import com.example.jalsanchaytracker.util.toSafeDouble
 import com.example.jalsanchaytracker.viewmodel.RainfallViewModel
 
 @Composable
 fun AddDataScreen(viewModel: RainfallViewModel, onDataAdded: () -> Unit) {
     var rainfallMm by remember { mutableStateOf("") }
 
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-        Text(text = "Add Rainfall Data", style = MaterialTheme.typography.headlineMedium)
-        Spacer(modifier = Modifier.height(24.dp))
-
-        OutlinedTextField(
+    ScreenScaffold(title = "Add Rainfall Data") {
+        AppTextField(
             value = rainfallMm,
             onValueChange = { rainfallMm = it },
-            label = { Text("Rainfall (mm)") },
-            modifier = Modifier.fillMaxWidth(),
+            label = "Rainfall (mm)",
             singleLine = true
         )
 
@@ -27,7 +33,7 @@ fun AddDataScreen(viewModel: RainfallViewModel, onDataAdded: () -> Unit) {
 
         Button(
             onClick = {
-                val mm = rainfallMm.toDoubleOrNull() ?: 0.0
+                val mm = rainfallMm.toSafeDouble()
                 if (mm > 0) {
                     viewModel.addRainfallData(mm)
                     onDataAdded()

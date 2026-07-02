@@ -8,7 +8,10 @@ import com.example.jalsanchaytracker.data.WaterUsageEntity
 import com.example.jalsanchaytracker.repository.RainfallRepository
 import com.example.jalsanchaytracker.repository.UserRepository
 import com.example.jalsanchaytracker.repository.WaterUsageRepository
-import kotlinx.coroutines.flow.*
+import com.example.jalsanchaytracker.util.stateInWhileSubscribed
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
@@ -22,23 +25,23 @@ class RainfallViewModel(
 ) : ViewModel() {
 
     val allRainfallData: StateFlow<List<RainfallEntity>> = rainfallRepository.allRainfallData
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+        .stateInWhileSubscribed(viewModelScope, emptyList())
 
     val userProfile: StateFlow<UserEntity?> = userRepository.user
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
+        .stateInWhileSubscribed(viewModelScope, null)
 
     val totalWaterSaved: StateFlow<Double?> = rainfallRepository.totalWaterSaved
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0.0)
+        .stateInWhileSubscribed(viewModelScope, 0.0)
 
     val totalWaterUsed: StateFlow<Double?> = waterUsageRepository.totalUsage
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0.0)
+        .stateInWhileSubscribed(viewModelScope, 0.0)
 
     val availableWater: StateFlow<Double> = combine(
         totalWaterSaved,
         totalWaterUsed
     ) { saved, used ->
         (saved ?: 0.0) - (used ?: 0.0)
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), 0.0)
+    }.stateInWhileSubscribed(viewModelScope, 0.0)
 
     val chartData: StateFlow<LineData?> = rainfallRepository.allRainfallData
         .map { history ->
@@ -57,7 +60,7 @@ class RainfallViewModel(
                 LineData(dataSet)
             }
         }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), null)
+        .stateInWhileSubscribed(viewModelScope, null)
 
     fun addRainfallData(rainfallMm: Double) {
         viewModelScope.launch {
