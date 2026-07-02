@@ -24,6 +24,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.jalsanchaytracker.viewmodel.RainfallViewModel
+import com.example.jalsanchaytracker.viewmodel.UiEvent
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun DashboardScreen(viewModel: RainfallViewModel) {
@@ -38,8 +40,19 @@ fun DashboardScreen(viewModel: RainfallViewModel) {
     }
 
     var showUsageDialog by remember { mutableStateOf(false) }
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(Unit) {
+        viewModel.uiEvents.collectLatest { event ->
+            when (event) {
+                is UiEvent.ShowError -> snackbarHostState.showSnackbar(event.message)
+                is UiEvent.ShowSuccess -> snackbarHostState.showSnackbar(event.message)
+            }
+        }
+    }
 
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { showUsageDialog = true },
@@ -147,13 +160,11 @@ fun ModernWaterTankCard(fillPercentage: Float, available: Double, capacity: Doub
                     val width = size.width
                     val height = size.height
                     
-                    // Background path (tank shape)
                     drawRect(
                         color = Color(0xFFE0E0E0),
                         style = Stroke(width = 2.dp.toPx())
                     )
                     
-                    // Water
                     val waterHeight = height * animatedFill
                     drawRect(
                         brush = Brush.verticalGradient(
@@ -239,19 +250,34 @@ fun InstructionItem(text: String) {
 @Composable
 fun UsageInputDialog(onDismiss: () -> Unit, onConfirm: (Double) -> Unit) {
     var amount by remember { mutableStateOf("") }
+    var inputError by remember { mutableStateOf<String?>(null) }
+
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text("Log Water Usage") },
         text = {
             OutlinedTextField(
                 value = amount,
-                onValueChange = { amount = it },
+                onValueChange = {
+                    amount = it
+                    inputError = null
+                },
                 label = { Text("Amount (Liters)") },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                isError = inputError != null,
+                supportingText = inputError?.let { { Text(it) } }
             )
         },
         confirmButton = {
-            Button(onClick = { onConfirm(amount.toDoubleOrNull() ?: 0.0) }) {
+            Button(onClick = {
+                val value = amount.toDoubleOrNull()
+                when {
+                    amount.isBlank() -> inputError = "Please enter an amount"
+                    value == null -> inputError = "Please enter a valid number"
+                    value <= 0 -> inputError = "Amount must be greater than zero"
+                    else -> onConfirm(value)
+                }
+            }) {
                 Text("Confirm")
             }
         },

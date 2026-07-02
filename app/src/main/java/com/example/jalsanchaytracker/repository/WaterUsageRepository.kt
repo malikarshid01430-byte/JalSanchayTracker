@@ -1,5 +1,6 @@
 package com.example.jalsanchaytracker.repository
 
+import android.util.Log
 import com.example.jalsanchaytracker.data.WaterUsageDao
 import com.example.jalsanchaytracker.data.WaterUsageEntity
 import kotlinx.coroutines.flow.Flow
@@ -9,6 +10,11 @@ class WaterUsageRepository(private val waterUsageDao: WaterUsageDao) {
     val totalUsage: Flow<Double?> = waterUsageDao.getTotalUsage()
 
     suspend fun insert(usage: WaterUsageEntity) {
-        waterUsageDao.insertUsage(usage)
+        try {
+            waterUsageDao.insertUsage(usage)
+        } catch (e: Exception) {
+            Log.e("WaterUsageRepository", "Failed to insert water usage", e)
+            throw e
+        }
     }
 }
